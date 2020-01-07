@@ -1,1 +1,1 @@
-{"virtualbox":{"/mnt/host_machine":{"guestpath":"/mnt/host_machine","hostpath":"/Users/triaz/Documents/vagrant/ubuntu18.04-0","disabled":false,"__vagrantfile":true}}}
+{"virtualbox":{"/mnt/host_machine":{"guestpath":"/mnt/host_machine","hostpath":"C:/Users/tarya/Documents/GitHub/vagrant/ubuntu18.04-0","disabled":false,"__vagrantfile":true}}}
