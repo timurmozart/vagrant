@@ -11,5 +11,8 @@ sudo sed -i 's/#input(type="imudp" port="514")/input(type="imudp" port="514")/g'
 sudo sed -i 's/#module(load="imtcp")/module(load="imtcp")/g' /etc/rsyslog.conf
 sudo sed -i 's/#input(type="imtcp" port="514")/input(type="imtcp" port="514")/g' /etc/rsyslog.conf
 sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
-
+sudo sed '24 a #rule fo remote log' /etc/rsyslog.conf
+sudo sed '25 a $template RemoteLogs,"/var/log/%HOSTNAME%/%PROGRAMNAME%.log"' /etc/rsyslog.conf
+sudo sed '26 a *.* ?RemoteLogs' /etc/rsyslog.conf
+sudo sed '27 a & ~' /etc/rsyslog.conf
 sudo reboot now

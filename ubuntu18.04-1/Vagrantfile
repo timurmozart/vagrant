@@ -2,6 +2,9 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
+  if Vagrant.has_plugin?("vagrant-timezone")
+    config.timezone.value = "EET"
+  end
   config.vm.box = "ubuntu/bionic64"
   config.vm.network "private_network", ip: "192.168.10.11"
   config.vm.synced_folder ".", "/mnt/host_machine"
