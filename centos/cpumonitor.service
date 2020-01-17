@@ -1,0 +1,17 @@
+[Unit]
+        Description=get cpu info and write to log
+
+[Service]
+        Type=simple
+        Restart=always
+#        PIDFile=/opt/cpumonitor/cpumonitor.pid
+        WorkingDirectory=/opt/cpumonitoring
+#        User=vagrant
+#        Group=vagrant
+        ExecStart=/bin/bash /opt/cpumonitoring/cpumonitor.sh
+#        ExecStop=/usr/local/bin/bundle exec service -S /opt/cpumonitoring/cpumonitor.sh stop
+#        ExecReload=/usr/local/bin/bundle exec service -S /opt/cpumonitoring/cpumonitor.sh restart
+#        TimeoutSec=300
+
+[Install]
+        WantedBy=multi-user.target

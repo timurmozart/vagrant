@@ -1,0 +1,4 @@
+Jun 25 06:25:03 dockerci systemd-resolved[805]: Server returned error NXDOMAIN, mitigating potential DNS violation DVE-2018-0001, retrying transaction with reduced feature level UDP.
+Jun 25 06:25:03 dockerci rsyslogd:  [origin software="rsyslogd" swVersion="8.32.0" x-pid="1115" x-info="http://www.rsyslog.com"] rsyslogd was HUPed
+Jun 25 06:25:08 dockerci systemd-resolved[805]: Server returned error NXDOMAIN, mitigating potential DNS violation DVE-2018-0001, retrying transaction with reduced feature level UDP.
+Jun 25 06:25:08 dockerci systemd-resolved[805]: Server returned error NXDOMAIN, mitigating potential DNS violation DVE-2018-0001, retrying transaction with reduced feature level UDP.
