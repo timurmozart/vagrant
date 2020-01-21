@@ -5,49 +5,48 @@ servers = [
     {
         :name => "docker-swarm-head",
         :type => "master",
-        :box => "ubuntu/xenial64",
-        :box_version => "20180831.0.0",
+        :box => "centos/7",
+        :box_version => "1905.1",
         :eth1 => "192.168.10.50",
         :mem => "512",
         :cpu => "1",
-        :disk => '10G'
+        :disk => "10GB"
     },
     {
         :name => "docker-swarm-node-1",
         :type => "node",
-        :box => "ubuntu/xenial64",
-        :box_version => "20180831.0.0",
+        :box => "centos/7",
+        :box_version => "1905.1",
         :eth1 => "192.168.10.51",
         :mem => "2048",
         :cpu => "2",
-        :disk => '20G'
+        :disk => "10GB"
     },
     {
         :name => "docker-swarm-node-2",
         :type => "node",
-        :box => "ubuntu/xenial64",
-        :box_version => "20180831.0.0",
+        :box => "centos/7",
+        :box_version => "1905.1",
         :eth1 => "192.168.10.52",
         :mem => "2048",
         :cpu => "2",
-        :disk => '20G'
+        :disk => '10GB'
     }
 ]
 
 # This script to install k8s using kubeadm will get executed after a box is provisioned
 $configureBox = <<-SCRIPT
-    sudo sed -i 's/ubuntu-bionic/rsyslog-0/g' /etc/hostname
-    apt-get update
-    apt-get install -y mc tree wget 
+    sudo yum update -y
+    sudo yum install -y mc tree wget epel-release tmux
     sudo sed -i 's/#module(load="imudp")/module(load="imudp")/g' /etc/rsyslog.conf
     sudo sed -i 's/#input(type="imudp" port="514")/input(type="imudp" port="514")/g' /etc/rsyslog.conf
     sudo sed -i 's/#module(load="imtcp")/module(load="imtcp")/g' /etc/rsyslog.conf
     sudo sed -i 's/#input(type="imtcp" port="514")/input(type="imtcp" port="514")/g' /etc/rsyslog.conf
-    sudo echo "*.* @@192.168.10.2:514" >> /etc/rsyslog.conf
+    sudo grep -qxF '*.* @@192.168.10.2:514' /etc/rsyslog.conf || sudo echo '*.* @@192.168.10.2:514' >> /etc/rsyslog.conf
     sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
     sudo systemctl restart rsyslog
     sudo systemctl restart sshd
-
+    mkdir -p /home/vagrant/postgres/data
 SCRIPT
 
 $configureMaster = <<-SCRIPT
@@ -67,9 +66,9 @@ Vagrant.configure("2") do |config|
             config.vm.box_version = opts[:box_version]
             config.vm.hostname = opts[:name]
             config.vm.network :private_network, ip: opts[:eth1]
-            if Vagrant.has_plugin?("vagrant-disksize")
-                config.disksize.size = opts[:disk]
-            end
+            # if Vagrant.has_plugin?("vagrant-disksize")
+            #     config.disksize.size = opts[:disk]
+            # end
             config.vm.provider "virtualbox" do |v|
 
                 v.name = opts[:name]
