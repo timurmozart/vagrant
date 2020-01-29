@@ -1,0 +1,21 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  if Vagrant.has_plugin?("vagrant-timezone")
+    config.timezone.value = "EET"
+  end
+  if Vagrant.has_plugin?("vagrant-disksize")
+    config.disksize.size = '10GB'
+  end
+  config.vm.box = "centos/7"
+  config.vm.network "private_network", ip: "192.168.31.14"
+  config.vm.provider :virtualbox do |vb|
+      vb.name = "centos-jenkins"
+      vb.memory = "1024"
+  end
+  config.vm.provision "shell" do |s|
+    s.path = "provision.sh"
+  end
+  config.vm.synced_folder ".", "/mnt/host_machine"
+end

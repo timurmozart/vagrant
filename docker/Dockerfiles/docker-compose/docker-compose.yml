@@ -1,0 +1,54 @@
+version: '3.1'
+
+services:
+
+  galera1:
+    image: severalnines/mariadb
+    container_name: galera1
+    restart: always
+    ports:
+      - 3306
+      - 4444
+      - 4567
+      - 4568
+    volumes: 
+      - .galera1/cnf/galera1.cnf:/etc/my.cnf.d/galera.cnf
+    environment:
+      MYSQL_ROOT_PASSWORD: ASdf456+
+      CLUSTER_NAME: my_galera_cluster
+
+  galera2:
+    image: severalnines/mariadb
+    container_name: galera2
+    restart: always
+    ports:
+      - 3306
+      - 4444
+      - 4567
+      - 4568
+    volumes: 
+      - .galera2/cnf/galera2.cnf:/etc/my.cnf.d/galera.cnf
+    environment:
+      MYSQL_ROOT_PASSWORD: ASdf456+
+      CLUSTER_NAME: my_galera_cluster
+
+  galera3:
+    image: severalnines/mariadb
+    container_name: galera3
+    restart: always
+    ports:
+      - 3306
+      - 4444
+      - 4567
+      - 4568
+    volumes: 
+      - .galera3/cnf/galera3.cnf:/etc/my.cnf.d/galera.cnf
+    environment:
+      MYSQL_ROOT_PASSWORD: ASdf456+
+      CLUSTER_NAME: my_galera_cluster
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 9000:8080

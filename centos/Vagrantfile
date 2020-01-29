@@ -6,7 +6,7 @@ Vagrant.configure("2") do |config|
     config.timezone.value = "EET"
   end
   config.vm.box = "centos/7"
-  config.vm.network "private_network", ip: "192.168.10.12"
+  config.vm.network "private_network", ip: "192.168.31.12"
   config.vm.synced_folder ".", "/mnt/host_machine"
   config.vm.provider :virtualbox do |vb|
       vb.name = "centos7-tst-0"

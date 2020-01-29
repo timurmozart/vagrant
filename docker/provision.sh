@@ -15,4 +15,5 @@ sudo yum update && yum install rsyslog
 sudo systemctl start rsyslog
 sudo systemctl enable rsyslog
 sudo systemctl status rsyslog
+sudo usermod -aG docker vagrant
 # sudo ssh-keygen

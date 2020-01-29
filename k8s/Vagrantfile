@@ -1,0 +1,93 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+servers = [
+    {
+        :name => "docker-swarm-head",
+        :type => "master",
+        :box => "centos/7",
+        :box_version => "1905.1",
+        :eth1 => "192.168.31.50",
+        :mem => "512",
+        :cpu => "1",
+        :disk => "10GB"
+    },
+    {
+        :name => "docker-swarm-node-1",
+        :type => "node",
+        :box => "centos/7",
+        :box_version => "1905.1",
+        :eth1 => "192.168.31.51",
+        :mem => "2048",
+        :cpu => "2",
+        :disk => "10GB"
+    },
+    {
+        :name => "docker-swarm-node-2",
+        :type => "node",
+        :box => "centos/7",
+        :box_version => "1905.1",
+        :eth1 => "192.168.31.52",
+        :mem => "2048",
+        :cpu => "2",
+        :disk => '1G0B'
+    }
+]
+
+# This script to install k8s using kubeadm will get executed after a box is provisioned
+$configureBox = <<-SCRIPT
+    sudo yum update -y
+    sudo yum install -y mc tree wget epel-release tmux
+    sudo sed -i 's/#module(load="imudp")/module(load="imudp")/g' /etc/rsyslog.conf
+    sudo sed -i 's/#input(type="imudp" port="514")/input(type="imudp" port="514")/g' /etc/rsyslog.conf
+    sudo sed -i 's/#module(load="imtcp")/module(load="imtcp")/g' /etc/rsyslog.conf
+    sudo sed -i 's/#input(type="imtcp" port="514")/input(type="imtcp" port="514")/g' /etc/rsyslog.conf
+    sudo grep -qxF '*.* @@192.168.31.2:514' /etc/rsyslog.conf || sudo echo '*.* @@192.168.31.2:514' >> /etc/rsyslog.conf
+    sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+    sudo systemctl restart rsyslog
+    sudo systemctl restart sshd
+    mkdir -p /home/vagrant/postgres/data
+SCRIPT
+
+$configureMaster = <<-SCRIPT
+    echo "This is master"
+SCRIPT
+
+$configureNode = <<-SCRIPT
+    echo "This is worker"
+SCRIPT
+
+Vagrant.configure("2") do |config|
+
+    servers.each do |opts|
+        config.vm.define opts[:name] do |config|
+
+            config.vm.box = opts[:box]
+            config.vm.box_version = opts[:box_version]
+            config.vm.hostname = opts[:name]
+            config.vm.network :private_network, ip: opts[:eth1]
+            # if Vagrant.has_plugin?("vagrant-disksize")
+            #     config.disksize.size = opts[:disk]
+            # end
+            config.vm.provider "virtualbox" do |v|
+
+                v.name = opts[:name]
+            	v.customize ["modifyvm", :id, "--groups", "/docker_swarm_group"]
+                v.customize ["modifyvm", :id, "--memory", opts[:mem]]
+                v.customize ["modifyvm", :id, "--cpus", opts[:cpu]]
+
+            end
+            config.vm.synced_folder ".", "/mnt/host_machine"
+            config.vm.provision "shell", inline: $configureBox
+
+            if opts[:type] == "master"
+                config.vm.provision "shell", inline: $configureMaster
+            else
+                config.vm.provision "shell", inline: $configureNode
+            end
+
+        end
+
+    end
+
+end 
