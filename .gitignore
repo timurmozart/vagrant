@@ -5,4 +5,4 @@
 *.yaml
 k8s-clu-centos-7/tiller.yaml
 *.yml
-Dockerfiles
+Dockerfiles*
