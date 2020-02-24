@@ -1,0 +1,34 @@
+export GO111MODULE="on"
+export PATH=$PATH:/root/go/bin
+go mod download
+go get sigs.k8s.io/controller-tools/cmd/controller-gen@v0.2.4
+go get golang.org/x/tools/cmd/goimports
+go install sigs.k8s.io/kustomize/kustomize/v3
+
+os=$(go env GOOS)
+arch=$(go env GOARCH)
+curl -L https://go.kubebuilder.io/dl/2.2.0/${os}/${arch} | tar -xz -C /tmp/
+sudo mv /tmp/kubebuilder_2.2.0_${os}_${arch} /usr/local/kubebuilder
+export PATH=$PATH:/usr/local/kubebuilder/bin
+
+
+
+minikube start --vm-driver=virtualbox
+kubectl taint nodes k8s-m node-role.kubernetes.io/master-
+kubectl apply -f ../tiller.yaml - тому що ні можна просто встановити helm tiller - серверний компонент helm2 на k8s 1.16+ майже як Бромір в володаре перстня ;)
+
+
+eval $(minikube docker-env)
+make docker-build && make docker-build-pod
+
+kubectl port-forward svc/varnishcluster-sample 8080:80 9131:9131 -n varnish-test
+helm upgrade --install varnish-operator --namespace "varnish-operator"  --set container.image=varnish-operator:0.22.1-dev --set container.imagePullPolicy=Never ./varnish-operator
+
+
+tiller.yaml
+
+
+export HELM_HOST=":44134"
+tiller -listen ${HELM_HOST} -alsologtostderr >/dev/null 2>&1 &
+
+kubectl create deployment nginx-backend --image nginx -n varnish-test

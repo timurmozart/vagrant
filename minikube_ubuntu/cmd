@@ -1,0 +1,23 @@
+go get sigs.k8s.io/controller-tools/cmd/controller-gen@v0.2.4
+minikube start --vm-driver=virtualbox
+kubectl apply -f ../tiller.yaml - тому що ні можна просто встановити helm tiller - серверний компонент helm2 на k8s 1.16+ майже як Бромір в володаре перстня ;)
+
+eval $(minikube docker-env)
+make docker-build && make docker-build-pod
+
+kubectl port-forward svc/varnishcluster-sample 8080:80 9131:9131
+helm upgrade --install varnish-operator --namespace "varnish-operator" --set container.image=varnish-operator:0.22.1-dev --set container.imagePullPolicy=Never ./varnish-operator
+
+
+$ export HELM_HOST=":44134"
+$ tiller -listen ${HELM_HOST} -alsologtostderr >/dev/null 2>&1 &
+
+
+
+sudo docker load -i /mnt/host_machine/varnish-operator.tar
+sudo docker load -i /mnt/host_machine/varnish.tar
+sudo docker load -i /mnt/host_machine/varnish-metrics-exporter.tar
+sudo docker load -i /mnt/host_machine/varnish-controller.tar
+
+
+watch 'echo "***** namespace varnish-operator *****" && kubectl get all -n varnish-operator -o wide && echo "" && echo "" && echo "************************************* namespace varnish-test *************************************" && kubectl get all -n varnish-test -o wide && echo "" && echo "" && echo "****namespaces****" && kubectl get ns && echo "****images****" && docker image ls | grep varnish'
